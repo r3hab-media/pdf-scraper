@@ -12,14 +12,6 @@
   <title>PDF Scraper</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      height: 100vh;
-    }
-
     body {
       display: flex;
       flex-direction: column;
@@ -58,20 +50,19 @@
 <body>
   <main>
     <div class="container">
-      <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-4">
-          <h1 class="display-5">PDF Scraper</h1>
-          <form action="/scrape" method="post">
-            <label for="url">Enter the URL:</label>
-            <input type="text" id="url" name="url" class="form-control" required>
-            <br>
-            <label class="form-label" for="outputDir">Enter the output directory:</label>
-            <input type="text" id="outputDir" name="outputDir" placeholder="./downloads" class="form-control">
-            <br>
-            <button class="btn btn-dark" type="submit">Scrape</button>
-          </form>
-        </div>
-      </div>
+      <h1 class="display-5">PDF Scraper</h1>
+      <form action="/scrape" method="post">
+        <label for="url">Enter the URL:</label>
+        <input type="text" id="url" name="url" class="form-control" required>
+        <br>
+        <label class="form-label" for="outputDir">Enter the output directory:</label>
+        <input type="text" id="outputDir" name="outputDir" placeholder="./downloads" class="form-control">
+        <br>
+        <label class="form-label" for="zipName">Enter the name for the zip file:</label>
+        <input type="text" id="zipName" name="zipName" placeholder="pdfs" class="form-control">
+        <br>
+        <button class="btn btn-dark" type="submit">Scrape</button>
+      </form>
     </div>
   </main>
   <footer>Made with <i class="fa-solid fa-heart text-danger"></i> &amp; <i class="fa-solid fa-mug-hot text-warning"></i>
