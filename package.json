@@ -1,0 +1,23 @@
+{
+  "name": "pdf-scraper",
+  "version": "1.0.0",
+  "description": "A simple PDF scraper.",
+  "main": "pdf-scraper.js",
+  "type": "module",
+  "bin": {
+    "pdf-scraper": "./pdf-scraper.js"
+  },
+  "scripts": {
+    "start": "node pdf-scraper.js"
+  },
+  "dependencies": {
+    "archiver": "^5.3.1",
+    "axios": "^1.5.0",
+    "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "author": "",
+  "license": "MIT"
+}
