@@ -30,19 +30,26 @@
     }
 
     footer {
-      background: lightslategray;
       text-align: center;
-      color: white;
       padding: 20px;
-      font-size: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     footer a {
-      color: white;
+      color: black;
+      font-style: italic;
     }
 
     footer .fa-solid {
       margin: 0 .5rem;
+    }
+
+    @media screen and (min-width: 600px) {
+      footer {
+        flex-direction: row;
+      }
     }
   </style>
 </head>
@@ -51,9 +58,13 @@
   <main>
     <div class="container">
       <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-4">
-          <h1 class="display-5">PDF Scraper</h1>
-          <form action="/scrape" method="post">
+        <div class="col-sm-12 col-lg-8">
+          <h1 class="display-5"><i class="fa-solid fa-layer-group"></i> Scrape<span class="fst-italic">Stack</span></h1>
+          <p><strong>Scrape<span class="fst-italic">Stack</span></strong> is a web tool that helps you download all PDF
+            files from a specified webpage into a single ZIP file. Just enter the URL of the webpage containing the PDFs
+            and specify a name for the ZIP file. The tool will then gather all the PDFs from the page, bundle them into
+            the ZIP file, and prompt you to download it, making it easier to save multiple PDFs at once.</p>
+          <form action="/scrape" method="post" class="col-sm-12 col-md-6">
             <label for="url">Enter the URL:</label>
             <input type="text" id="url" name="url" class="form-control" required>
             <br>
@@ -66,8 +77,14 @@
       </div>
     </div>
   </main>
-  <footer>Made with <i class="fa-solid fa-heart text-danger"></i> &amp; <i class="fa-solid fa-mug-hot text-warning"></i>
-    by <a href="https://jarednewnam.com">Jared Newnam</a>, <span id="thisYear"></span></footer>
+  <footer>
+    <div class="front">
+      Made with <i class="fa-solid fa-heart text-danger"></i> &amp; <i class="fa-solid fa-mug-hot text-warning"></i>
+    </div>
+    <div class="back">
+      by <a href="https://jarednewnam.com">Jared Newnam</a>, <span id="thisYear"></span>
+    </div>
+  </footer>
 
   <script>
     var currYr = new Date().getFullYear();
