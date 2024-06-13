@@ -12,30 +12,24 @@
   <title>PDF Scraper</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      height: 100vh;
-    }
-
     body {
-      margin: 0;
-      padding: 0;
-      font-family: "Roboto", sans-serif;
+      display: flex;
+      flex-direction: column;
       min-height: 100vh;
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+    }
 
-      position: relative;
-      padding-bottom: 50px;
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      /* align-items: center; */
-      height: 100vh;
+      max-width: 600px;
     }
 
     footer {
@@ -43,13 +37,6 @@
       text-align: center;
       color: white;
       padding: 20px;
-      text-align: center;
-
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 50px;
     }
   </style>
 </head>
@@ -57,20 +44,19 @@
 <body>
   <main>
     <div class="container">
-      <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-4">
-          <h1 class="display-5">PDF Scraper</h1>
-          <form action="/scrape" method="post">
-            <label for="url">Enter the URL:</label>
-            <input type="text" id="url" name="url" class="form-control" required>
-            <br>
-            <label class="form-label" for="outputDir">Enter the output directory:</label>
-            <input type="text" id="outputDir" name="outputDir" placeholder="./downloads" class="form-control">
-            <br>
-            <button class="btn btn-dark" type="submit">Scrape</button>
-          </form>
-        </div>
-      </div>
+      <h1 class="display-5">PDF Scraper</h1>
+      <form action="/scrape" method="post">
+        <label for="url">Enter the URL:</label>
+        <input type="text" id="url" name="url" class="form-control" required>
+        <br>
+        <label class="form-label" for="outputDir">Enter the output directory:</label>
+        <input type="text" id="outputDir" name="outputDir" placeholder="./downloads" class="form-control">
+        <br>
+        <label class="form-label" for="zipName">Enter the name for the zip file:</label>
+        <input type="text" id="zipName" name="zipName" placeholder="pdfs" class="form-control">
+        <br>
+        <button class="btn btn-dark" type="submit">Scrape</button>
+      </form>
     </div>
   </main>
   <footer>Made with <i class="fa-solid fa-heart"></i> &amp; <i class="fa-solid fa-mug-hot"></i></footer>
