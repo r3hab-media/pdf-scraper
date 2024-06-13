@@ -1,15 +1,21 @@
+import express from "express";
+import bodyParser from "body-parser";
 import axios from "axios";
 import { load } from "cheerio";
-import { createWriteStream } from "fs";
+import { createWriteStream, mkdirSync } from "fs";
 import archiver from "archiver";
-import { basename, join, dirname } from "path";
+import { basename, join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
-
-// URL of the page to scrape
-const url = "https://www.scottsdaleaz.gov/court/forms"; // Replace with the actual URL
 
 // Get the __dirname equivalent in ES modules
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const app = express();
+const port = 3000;
+
+// Middleware setup
+app.use(bodyParser.urlencoded({ extended: false }));
+app.set("view engine", "ejs");
 
 // Function to download a file
 const downloadFile = async (url, filePath) => {
@@ -54,11 +60,22 @@ const createZip = (files, output) => {
 	});
 };
 
-// Main function to scrape the page and download PDFs
-const scrapeAndDownloadPDFs = async () => {
+// Route for the form
+app.get("/", (req, res) => {
+	res.render("index");
+});
+
+// Route to handle form submission
+app.post("/scrape", async (req, res) => {
+	const url = req.body.url;
+	const outputDir = req.body.outputDir || "./downloads";
+
 	try {
 		const { data } = await axios.get(url);
 		const $ = load(data);
+
+		// Ensure the output directory exists
+		mkdirSync(outputDir, { recursive: true });
 
 		// Find all PDF links
 		const pdfLinks = [];
@@ -74,23 +91,24 @@ const scrapeAndDownloadPDFs = async () => {
 		});
 
 		// Download each PDF
-		const downloadPromises = pdfLinks.map((link, index) => {
-			const filePath = join(__dirname, `file${index + 1}.pdf`);
+		const downloadPromises = pdfLinks.map((link) => {
+			const fileName = basename(new URL(link).pathname);
+			const filePath = join(outputDir, fileName);
 			return downloadFile(link, filePath).then(() => filePath);
 		});
 
 		const files = await Promise.all(downloadPromises);
 
 		// Create a zip file
-		const zipFilePath = join(__dirname, "pdfs.zip");
+		const zipFilePath = join(outputDir, "pdfs.zip");
 		await createZip(files, zipFilePath);
 
-		console.log("PDFs downloaded and zipped successfully!");
+		res.send(`PDFs downloaded and zipped successfully in ${resolve(outputDir)}!`);
 	} catch (error) {
-		console.error("Error:", error.message);
+		res.status(500).send(`Error: ${error.message}`);
 	}
-};
+});
 
-scrapeAndDownloadPDFs();
-
-//by Jared Newnam
+app.listen(port, () => {
+	console.log(`Server running at http://localhost:${port}`);
+});

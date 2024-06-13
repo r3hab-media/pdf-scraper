@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Scraper</title>
+</head>
+
+<body>
+  <h1>PDF Scraper</h1>
+  <form action="/scrape" method="post">
+    <label for="url">Enter the URL:</label>
+    <input type="text" id="url" name="url" required>
+    <br>
+    <label for="outputDir">Enter the output directory:</label>
+    <input type="text" id="outputDir" name="outputDir" placeholder="./downloads">
+    <br>
+    <button type="submit">Scrape</button>
+  </form>
+</body>
+
+</html>
