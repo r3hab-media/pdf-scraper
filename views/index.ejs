@@ -21,21 +21,20 @@
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      font-family: "Roboto", sans-serif;
-      min-height: 100vh;
-
-      position: relative;
-      padding-bottom: 50px;
-    }
-
-    .container {
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+      font-size: 16px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      /* align-items: center; */
-      height: 100vh;
+      padding: 20px;
     }
 
     footer {
@@ -43,13 +42,15 @@
       text-align: center;
       color: white;
       padding: 20px;
-      text-align: center;
+      font-size: 1.2rem;
+    }
 
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 50px;
+    footer a {
+      color: white;
+    }
+
+    footer .fa-solid {
+      margin: 0 .5rem;
     }
   </style>
 </head>
@@ -73,7 +74,13 @@
       </div>
     </div>
   </main>
-  <footer>Made with <i class="fa-solid fa-heart"></i> &amp; <i class="fa-solid fa-mug-hot"></i></footer>
+  <footer>Made with <i class="fa-solid fa-heart text-danger"></i> &amp; <i class="fa-solid fa-mug-hot text-warning"></i>
+    by <a href="https://jarednewnam.com">Jared Newnam</a>, <span id="thisYear"></span></footer>
+
+  <script>
+    var currYr = new Date().getFullYear();
+    thisYear.textContent = currYr;
+  </script>
 </body>
 
 </html>
