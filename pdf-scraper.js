@@ -79,8 +79,8 @@ app.post("/scrape", async (req, res) => {
 		const { data } = await axios.get(url);
 		const $ = load(data);
 
-		const fileTypes = req.body.fileTypes || ["pdf"]; // from form input
-		const pattern = new RegExp(`\\.(${Array.isArray(fileTypes) ? fileTypes.join("|") : fileTypes})$`, "i");
+		const fileType = req.body.fileType || "pdf";
+		const pattern = new RegExp(`\\.${fileType}$`, "i");
 
 		const fileLinks = [];
 		$("a[href]").each((i, el) => {
@@ -94,6 +94,18 @@ app.post("/scrape", async (req, res) => {
 				fileLinks.push(href);
 			}
 		});
+
+		if (fileLinks.length === 0) {
+			return res.status(200).send(`
+        <html>
+          <head><title>No Files Found</title></head>
+          <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h2>No matching <code>.${fileType}</code> files were found on the page.</h2>
+            <p><a href="/" style="text-decoration: none; color: #007bff;">&larr; Go back and try again</a></p>
+          </body>
+        </html>
+      `);
+		}
 
 		const downloadPromises = fileLinks.map((link) => {
 			const fileName = decodeURIComponent(basename(new URL(link).pathname));

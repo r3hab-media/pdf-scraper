@@ -68,15 +68,13 @@
             <label for="url">Enter the URL:</label>
             <input type="text" id="url" name="url" class="form-control" required>
             <br>
-            <label class="form-label">What file types should be scraped?</label>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="fileTypes" value="pdf" checked>
-              <label class="form-check-label">PDF</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="fileTypes" value="mp4">
-              <label class="form-check-label">MP4</label>
-            </div>
+            <div class="mb-3">
+              <label class="form-label" for="fileType">Select file type to scrape:</label>
+              <select id="fileType" name="fileType" class="form-select" required>
+                <option value="pdf" selected>PDF (.pdf)</option>
+                <option value="mp4">Video (.mp4)</option>
+              </select>
+            </div>            
 
             <input type="text" id="zipName" name="zipName" placeholder="file_" class="form-control">
             <br>

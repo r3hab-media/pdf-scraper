@@ -1,12 +1,14 @@
 # ScrapeStack
 
-**ScrapeStack** is a web tool that helps you download all PDF files from a specified webpage into a single ZIP file. Just enter the URL of the webpage containing the PDFs and specify a name for the ZIP file. The tool will then gather all the PDFs from the page, bundle them into the ZIP file, and prompt you to download it, making it easier to save multiple PDFs at once.
+**ScrapeStack** is a web tool that helps you download all matching files (PDF or MP4) from a specified webpage into a single ZIP file. Just enter the URL, choose the file type you'd like to scrape, and give your ZIP file a name. ScrapeStack will find all files of that type, bundle them, and prompt you to download them in one convenient archive.
 
 ## Features
 
-- **Extract PDFs**: Automatically finds and collects all PDF links from a given webpage.
-- **Single ZIP Download**: Bundles all PDFs into a single ZIP file for easy download.
-- **Custom ZIP Name**: Allows you to specify a name for the ZIP file.
+- **Scrape PDFs or MP4s**: Choose which file type you want to download from a page.
+- **Single ZIP Download**: Bundles all matching files into a single downloadable ZIP.
+- **Real-Time Progress**: Watch chunked scraping updates live on the page.
+- **Smart File Naming**: Files are downloaded using their original names.
+- **Custom ZIP Name**: Easily name your download package.
 
 ## Requirements
 
@@ -23,6 +25,7 @@
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
@@ -35,43 +38,53 @@
    npm start
    ```
 
-2. **Access the web tool**: Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+2. **Open the tool** in your browser:
 
-3. **Use the tool**:
+   [http://localhost:3000](http://localhost:3000)
 
-   - Enter the URL of the webpage containing PDFs.
-   - Specify a name for the ZIP file.
-   - Click "Scrape" to start the process.
+3. **Scrape files**:
 
-4. **Download the ZIP file**: Once the process is complete, a ZIP file containing all the PDFs will be automatically downloaded to your default download location.
+   - Enter the URL of the page containing the files.
+   - Select the file type to scrape (`PDF` or `MP4`).
+   - Specify a name for your ZIP file.
+   - Click **Scrape** to begin.
+
+4. **Download**: Once processing is complete, the ZIP file will be automatically offered for download.
 
 ## Example
 
 Here’s how you can use **ScrapeStack**:
 
-1. Go to [http://localhost:3000](http://localhost:3000) after starting the server.
-2. Enter a URL, for example: `https://example.com/reports`
-3. Enter a name for the ZIP file, such as `reports_archive`
-4. Click "Scrape".
-5. Wait for the tool to process and download your ZIP file.
+1. Start the server and visit [http://localhost:3000](http://localhost:3000)
+2. Enter a target page (e.g. `https://example.com/media`)
+3. Select `MP4` or `PDF`
+4. Name your ZIP file (e.g. `downloads`)
+5. Click **Scrape**
+6. ScrapeStack will collect and zip all matching files, and prompt you to download
+
+> If no matching files are found, ScrapeStack will display a message and skip the ZIP creation.
 
 ## Troubleshooting
 
-- **Ensure the URL is correct**: Make sure you enter a valid URL pointing to a webpage containing PDF links.
-- **Check server logs**: If the tool isn't working as expected, check the terminal for any error messages or logs.
+- **No files found?** Double-check your selected file type matches what’s on the page.
+- **Empty ZIP file?** ScrapeStack prevents this by skipping ZIP creation if nothing is found.
+- **Server errors?** Check your terminal/console for logs.
 
 ## Contributing
 
-Feel free to contribute to the project by opening a pull request or submitting issues.
+Pull requests and feature suggestions are welcome!
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](license) file for details.
+MIT License. See the [LICENSE](license) file for details.
 
 ## Acknowledgements
 
-- **Bootstrap**: For the responsive layout and styles.
-- **Font Awesome**: For the awesome icons used in the footer.
+- [Bootstrap](https://getbootstrap.com) for UI components
+- [Font Awesome](https://fontawesome.com) for icons
+- [Cheerio](https://cheerio.js.org) and [Axios](https://axios-http.com) for HTML parsing and HTTP requests
+- [Archiver](https://www.npmjs.com/package/archiver) for ZIP generation
+- [Socket.IO](https://socket.io) for real-time progress display
 
 ---
 
