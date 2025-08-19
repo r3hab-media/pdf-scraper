@@ -79,19 +79,24 @@ app.post("/scrape", async (req, res) => {
 		const { data } = await axios.get(url);
 		const $ = load(data);
 
-		const pdfLinks = [];
-		$('a[href$=".pdf"]').each((index, element) => {
-			let pdfUrl = $(element).attr("href");
-			if (!pdfUrl.startsWith("http") && !pdfUrl.startsWith("//")) {
-				pdfUrl = new URL(pdfUrl, url).href;
-			} else if (pdfUrl.startsWith("//")) {
-				pdfUrl = `https:${pdfUrl}`;
+		const fileTypes = req.body.fileTypes || ["pdf"]; // from form input
+		const pattern = new RegExp(`\\.(${Array.isArray(fileTypes) ? fileTypes.join("|") : fileTypes})$`, "i");
+
+		const fileLinks = [];
+		$("a[href]").each((i, el) => {
+			let href = $(el).attr("href");
+			if (pattern.test(href)) {
+				if (!href.startsWith("http") && !href.startsWith("//")) {
+					href = new URL(href, url).href;
+				} else if (href.startsWith("//")) {
+					href = `https:${href}`;
+				}
+				fileLinks.push(href);
 			}
-			pdfLinks.push(pdfUrl);
 		});
 
-		const downloadPromises = pdfLinks.map((link) => {
-			const fileName = basename(new URL(link).pathname);
+		const downloadPromises = fileLinks.map((link) => {
+			const fileName = decodeURIComponent(basename(new URL(link).pathname));
 			const filePath = join(outputDir, fileName);
 			return downloadFile(link, filePath).then(() => filePath);
 		});
