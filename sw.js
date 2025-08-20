@@ -1,8 +1,8 @@
 const CACHE_NAME = "scrapestack-cache-v1";
 const STATIC_ASSETS = [
-	"/",
-	"/manifest.webmanifest",
-	"/sw.js",
+	"./",
+	"./manifest.webmanifest",
+	"./sw.js",
 	"https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css",
 	"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css",
 	"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700&display=swap",
