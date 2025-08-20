@@ -2,120 +2,143 @@ import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
 import { load } from "cheerio";
-import { createWriteStream, mkdirSync, unlinkSync } from "fs";
+import { createWriteStream, mkdirSync, unlinkSync, existsSync } from "fs";
 import archiver from "archiver";
 import { basename, join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const app = express();
 const port = 3000;
 
-// Middleware setup
+/* ------------------ PWA assets served from root ------------------ */
+
+// Manifest
+app.get("/manifest.webmanifest", (req, res) => {
+  res.type("application/manifest+json");
+  res.sendFile(join(__dirname, "manifest.webmanifest"));
+});
+
+// Service worker (root scope)
+app.get("/sw.js", (req, res) => {
+  res.set("Service-Worker-Allowed", "/");
+  res.type("application/javascript");
+  res.sendFile(join(__dirname, "sw.js"));
+});
+
+// Icons
+app.use("/icons", express.static(join(__dirname, "icons")));
+
+/* ------------------ Express setup ------------------ */
+
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", join(__dirname, "views"));
+// No public/ dir since you're not using one
 
-// Function to download a file
+/* ------------------ Helpers ------------------ */
+
 const downloadFile = async (url, filePath) => {
-	try {
-		const response = await axios({
-			url,
-			method: "GET",
-			responseType: "stream",
-		});
-
-		const writer = createWriteStream(filePath);
-		response.data.pipe(writer);
-
-		return new Promise((resolve, reject) => {
-			writer.on("finish", resolve);
-			writer.on("error", reject);
-		});
-	} catch (error) {
-		console.error(`Error downloading file: ${error.message}`);
-	}
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
+  });
+  const writer = createWriteStream(filePath);
+  response.data.pipe(writer);
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
 };
 
-// Function to create a zip file
-const createZip = (files, output) => {
-	return new Promise((resolve, reject) => {
-		const archive = archiver("zip", {
-			zlib: { level: 9 },
-		});
+const createZip = (files, output) =>
+  new Promise((resolve, reject) => {
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    const stream = createWriteStream(output);
+    stream.on("close", resolve);
+    archive.on("error", reject);
+    archive.pipe(stream);
+    files.forEach((file) => archive.file(file, { name: basename(file) }));
+    archive.finalize();
+  });
 
-		const stream = createWriteStream(output);
+/* ------------------ Routes ------------------ */
 
-		stream.on("close", () => resolve());
-		archive.on("error", (err) => reject(err));
-
-		archive.pipe(stream);
-
-		files.forEach((file) => {
-			archive.file(file, { name: basename(file) });
-		});
-
-		archive.finalize();
-	});
-};
-
-// Route for the form
 app.get("/", (req, res) => {
-	res.render("index");
+  res.render("index");
 });
 
-// Route to handle form submission
 app.post("/scrape", async (req, res) => {
-	const url = req.body.url;
-	const zipName = req.body.zipName || "pdfs";
-	const outputDir = join(__dirname, "temp");
-	const zipFilePath = join(outputDir, `${zipName}.zip`);
+  const url = req.body.url;
+  const zipName = req.body.zipName || "downloads";
+  const fileType = req.body.fileType || "pdf";
+  const outputDir = join(__dirname, "temp");
+  const zipFilePath = join(outputDir, `${zipName}.zip`);
 
-	try {
-		mkdirSync(outputDir, { recursive: true });
+  try {
+    mkdirSync(outputDir, { recursive: true });
 
-		const { data } = await axios.get(url);
-		const $ = load(data);
+    const { data } = await axios.get(url);
+    const $ = load(data);
 
-		const pdfLinks = [];
-		$('a[href$=".pdf"]').each((index, element) => {
-			let pdfUrl = $(element).attr("href");
-			if (!pdfUrl.startsWith("http") && !pdfUrl.startsWith("//")) {
-				pdfUrl = new URL(pdfUrl, url).href;
-			} else if (pdfUrl.startsWith("//")) {
-				pdfUrl = `https:${pdfUrl}`;
-			}
-			pdfLinks.push(pdfUrl);
-		});
+    const pattern = new RegExp(`\\.${fileType}$`, "i");
+    const fileLinks = [];
 
-		const downloadPromises = pdfLinks.map((link) => {
-			const fileName = basename(new URL(link).pathname);
-			const filePath = join(outputDir, fileName);
-			return downloadFile(link, filePath).then(() => filePath);
-		});
+    $("a[href]").each((i, el) => {
+      let href = $(el).attr("href");
+      if (!href) return;
+      if (pattern.test(href)) {
+        if (!href.startsWith("http") && !href.startsWith("//")) {
+          href = new URL(href, url).href;
+        } else if (href.startsWith("//")) {
+          href = `https:${href}`;
+        }
+        fileLinks.push(href);
+      }
+    });
 
-		const files = await Promise.all(downloadPromises);
+    if (fileLinks.length === 0) {
+      return res
+        .status(200)
+        .send(`
+        <html>
+          <head><title>No Files Found</title></head>
+          <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h2>No matching <code>.${fileType}</code> files were found on the page.</h2>
+            <p><a href="/" style="text-decoration: none; color: #007bff;">&larr; Go back and try again</a></p>
+          </body>
+        </html>
+      `);
+    }
 
-		await createZip(files, zipFilePath);
+    const downloadPromises = fileLinks.map((link) => {
+      const fileName = decodeURIComponent(basename(new URL(link).pathname));
+      const filePath = join(outputDir, fileName);
+      return downloadFile(link, filePath).then(() => filePath);
+    });
 
-		// Clean up individual files after creating zip
-		files.forEach((file) => unlinkSync(file));
+    const files = await Promise.all(downloadPromises);
 
-		res.download(zipFilePath, (err) => {
-			if (err) {
-				res.status(500).send("Failed to download the zip file.");
-			}
+    await createZip(files, zipFilePath);
 
-			// Delete zip file after download
-			unlinkSync(zipFilePath);
-		});
-	} catch (error) {
-		res.status(500).send(`Error: ${error.message}`);
-	}
+    // Clean up individual files after zipping
+    files.forEach((f) => {
+      if (existsSync(f)) unlinkSync(f);
+    });
+
+    res.download(zipFilePath, (err) => {
+      if (existsSync(zipFilePath)) unlinkSync(zipFilePath);
+      if (err) res.status(500).send("Failed to download the zip file.");
+    });
+  } catch (error) {
+    res.status(500).send(`Error: ${error.message}`);
+  }
 });
+
+/* ------------------ Start server ------------------ */
 
 app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
+
