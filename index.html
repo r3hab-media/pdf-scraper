@@ -74,7 +74,7 @@
             files from a specified webpage into a single ZIP file. Just enter the URL of the webpage containing the PDFs
             and specify a name for the ZIP file. The tool will then gather all the PDFs from the page, bundle them into
             the ZIP file, and prompt you to download it, making it easier to save multiple PDFs at once.</p>
-          <form action="/scrape" method="post" class="col-sm-12 col-md-6">
+            <form action="#" onsubmit="event.preventDefault(); alert('Scraping runs in the local app.');" method="post" class="col-sm-12 col-md-6">
             <label for="url">Enter the URL:</label>
             <input type="text" id="url" name="url" class="form-control" required>
             <br>
@@ -140,14 +140,6 @@
       installBtn?.classList.add('d-none');
       console.log('ScrapeStack installed');
     });
-  </script>
-
-  <script>
-    if (location.hostname.endsWith('github.io')) {
-      const f = document.querySelector('form');
-      f.setAttribute('action', '#');
-      f.addEventListener('submit', e => { e.preventDefault(); alert('Scraping runs in the local app.'); });
-    }
   </script>
 </body>
 

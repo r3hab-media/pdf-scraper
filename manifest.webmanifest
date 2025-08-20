@@ -1,12 +1,11 @@
 {
-  "name": "scrapeStack",
-  "short_name": "scrapeStack",
+  "name": "ScrapeStack",
+  "short_name": "ScrapeStack",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#212529",
-  "orientation": "portrait",
-  "scope": "/",
   "icons": [
     {
       "src": "./icons/icon-192.png",
