@@ -1,12 +1,9 @@
 {
   "name": "scrapestack",
   "version": "1.0.0",
-  "description": "Scrape PDFs or MP4s from a page and zip them.",
+  "description": "Scrape PDFs/MP4s/MP3s from a page and zip them.",
   "type": "module",
   "main": "pdf-scraper.js",
-  "bin": {
-    "scrapeStack": "./pdf-scraper.js"
-  },
   "scripts": {
     "start": "node pdf-scraper.js"
   },

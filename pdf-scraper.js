@@ -11,24 +11,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = 3000;
 
-/* ------------------ PWA assets served from root ------------------ */
-
-// Manifest
-app.get("/manifest.webmanifest", (req, res) => {
-  res.type("application/manifest+json");
-  res.sendFile(join(__dirname, "manifest.webmanifest"));
-});
-
-// Service worker (root scope)
-app.get("/sw.js", (req, res) => {
-  res.set("Service-Worker-Allowed", "/");
-  res.type("application/javascript");
-  res.sendFile(join(__dirname, "sw.js"));
-});
-
-// Icons
-app.use("/icons", express.static(join(__dirname, "icons")));
-
 /* ------------------ Express setup ------------------ */
 
 app.use(bodyParser.urlencoded({ extended: false }));
